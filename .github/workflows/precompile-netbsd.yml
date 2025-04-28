@@ -24,22 +24,11 @@ jobs:
       OPENSSL_VERSION_OTP_24_AND_BELOW: "1.1.1w"
     strategy:
       matrix:
-        include:
-          - pair:
-              fullversion: "9.0"
-              major: "9"
-        # - pair:
-        #     fullversion: "9.1"
-        #     major: "9"
-        # - pair:
-        #     fullversion: "9.2"
-        #     major: "9"
-        # - pair:
-        #     fullversion: "9.3"
-        #     major: "9"
+        job:
+          - { fullversion: "9.0", major: "9" }
       fail-fast: false
 
-    name: x86_64-unknown-netbsd${{ matrix.pair.fullversion }}
+    name: x86_64-unknown-netbsd
 
     steps:
       - name: Checkout
@@ -50,28 +39,28 @@ jobs:
         id: cache-openssl-otp24
         uses: actions/cache@v4
         with:
-          key: openssl-111-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-netbsd${{ matrix.pair.major }}
+          key: openssl-111-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-netbsd${{ matrix.job.fullversion }}
           path: |
-            ./openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-netbsd${{ matrix.pair.major }}.tar.gz
+            ./openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-netbsd.tar.gz
 
       - name: Download Precompiled OpenSSL for OTP 24 and below
         if: steps.cache-openssl-otp24.outputs.cache-hit != 'true'
         run: |
-          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION_OTP_24_AND_BELOW}/openssl-x86_64-unknown-netbsd${{ matrix.pair.major }}.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-netbsd${{ matrix.pair.major }}.tar.gz"
+          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION_OTP_24_AND_BELOW}/openssl-x86_64-unknown-netbsd.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-netbsd.tar.gz"
 
       - name: Cache Precompiled OpenSSL for OTP 25 and above
         if: "!startsWith(github.ref, 'refs/tags/v24') && !startsWith(github.ref, 'refs/tags/v23') && !startsWith(inputs.otp_version, 'v24') && !startsWith(inputs.otp_version, 'refs/tags/v23')"
         id: cache-openssl
         uses: actions/cache@v4
         with:
-          key: openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-netbsd${{ matrix.pair.major }}
+          key: openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-netbsd${{ matrix.job.fullversion }}
           path: |
-            ./openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-netbsd${{ matrix.pair.major }}.tar.gz
+            ./openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-netbsd.tar.gz
 
       - name: Download Precompiled OpenSSL for OTP 25 and above
         if: "!startsWith(github.ref, 'refs/tags/v24') && !startsWith(github.ref, 'refs/tags/v23') && !startsWith(inputs.otp_version, 'v24') && !startsWith(inputs.otp_version, 'v23') && steps.cache-openssl.outputs.cache-hit != 'true'"
         run: |
-          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION}/openssl-x86_64-unknown-netbsd${{ matrix.pair.major }}.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-netbsd${{ matrix.pair.major }}.tar.gz"
+          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION}/openssl-x86_64-unknown-netbsd.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-netbsd.tar.gz"
 
       - name: Cache OTP Source Code by Tag
         if: startsWith(github.ref, 'refs/tags/v')
@@ -115,13 +104,13 @@ jobs:
         uses: vmactions/netbsd-vm@v1
         with:
           envs: "OPENSSL_VERSION OPENSSL_VERSION_OTP_24_AND_BELOW"
-          release: ${{ matrix.pair.fullversion }}
+          release: ${{ matrix.job.fullversion }}
           usesh: true
           prepare: |
             /usr/sbin/pkg_add curl gmake perl
 
           run: |
-            export TRIPLET=x86_64-unknown-netbsd${{ matrix.pair.major }}
+            export TRIPLET=x86_64-unknown-netbsd
             export ROOT_DIR="$(pwd)"
             export OTP_VERSION=${{ inputs.otp_version }}
             export OTP_VERSION=${OTP_VERSION##v}
