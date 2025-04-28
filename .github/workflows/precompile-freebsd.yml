@@ -158,9 +158,8 @@ jobs:
             gmake DESTDIR="$(pwd)/otp_${OTP_VERSION}" install
             
             cd "$(pwd)/otp_${OTP_VERSION}"
-            tar -czf "${ROOT_DIR}/otp-${TRIPLET}.tar.gz" .
 
-            cd "${ROOT_DIR}"
+            tar -czf "${ROOT_DIR}/otp-${TRIPLET}.tar.gz" . && cd "${ROOT_DIR}"
             sha256sum otp-${TRIPLET}.tar.gz | tee otp-${TRIPLET}.tar.gz.sha256
 
       - uses: softprops/action-gh-release@v2
