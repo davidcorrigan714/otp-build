@@ -1,4 +1,4 @@
-name: precompile-freebsd13
+name: precompile-freebsd
 
 on:
   workflow_dispatch:
@@ -31,7 +31,7 @@ jobs:
               major: "13"
       fail-fast: false
 
-    name: x86_64-unknown-freebsd13
+    name: x86_64-unknown-freebsd
 
     steps:
       - name: Checkout
@@ -44,12 +44,12 @@ jobs:
         with:
           key: openssl-111-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-freebsd${{ matrix.pair.major }}
           path: |
-            ./openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-freebsd${{ matrix.pair.major }}.tar.gz
+            ./openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-freebsd.tar.gz
 
       - name: Download Precompiled OpenSSL for OTP 24 and below
         if: steps.cache-openssl-otp24.outputs.cache-hit != 'true'
         run: |
-          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION_OTP_24_AND_BELOW}/openssl-x86_64-unknown-freebsd${{ matrix.pair.major }}.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-freebsd${{ matrix.pair.major }}.tar.gz"
+          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION_OTP_24_AND_BELOW}/openssl-x86_64-unknown-freebsd.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION_OTP_24_AND_BELOW }}-x86_64-unknown-freebsd.tar.gz"
 
       - name: Cache Precompiled OpenSSL for OTP 25 and above
         if: "!startsWith(github.ref, 'refs/tags/v24') && !startsWith(inputs.otp_version, 'v24')"
@@ -58,12 +58,12 @@ jobs:
         with:
           key: openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-freebsd${{ matrix.pair.major }}
           path: |
-            ./openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-freebsd${{ matrix.pair.major }}.tar.gz
+            ./openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-freebsd.tar.gz
 
       - name: Download Precompiled OpenSSL for OTP 25 and above
         if: "!startsWith(github.ref, 'refs/tags/v24') && !startsWith(inputs.otp_version, 'v24') && steps.cache-openssl.outputs.cache-hit != 'true'"
         run: |
-          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION}/openssl-x86_64-unknown-freebsd${{ matrix.pair.major }}.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-freebsd${{ matrix.pair.major }}.tar.gz"
+          curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${OPENSSL_VERSION}/openssl-x86_64-unknown-freebsd.tar.gz" -o "openssl-${{ env.OPENSSL_VERSION }}-x86_64-unknown-freebsd.tar.gz"
 
       - name: Cache OTP Source Code by Tag
         if: startsWith(github.ref, 'refs/tags/v')
@@ -113,7 +113,7 @@ jobs:
             pkg install -y perl5 gmake
 
           run: |
-            export TRIPLET=x86_64-unknown-freebsd${{ matrix.pair.major }}
+            export TRIPLET=x86_64-unknown-freebsd
             export ROOT_DIR="$(pwd)"
             export OTP_VERSION=${{ inputs.otp_version }}
             export OTP_VERSION=${OTP_VERSION##v}
