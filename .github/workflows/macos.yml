@@ -130,9 +130,10 @@ jobs:
         id: cache-openssl
         uses: actions/cache@v4
         with:
-          key: openssl-${{ steps.build-check.outputs.openssl_version }}-${{ matrix.job.target }}
+          key: precompiled-openssl-${{ steps.build-check.outputs.openssl_version }}-${{ matrix.job.target }}
           path: |
             ./openssl-${{ matrix.job.target }}.tar.gz
+            ./openssl-${{ matrix.job.target }}.tar.gz.sha256
 
       - name: Download Precompiled OpenSSL
         if: steps.build-check.outputs.build == 'true' && steps.cache-openssl.outputs.cache-hit != 'true'
@@ -140,7 +141,7 @@ jobs:
           export OPENSSL_FILENAME="openssl-${{ matrix.job.target }}.tar.gz"
           curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${{ steps.build-check.outputs.openssl_version }}/${OPENSSL_FILENAME}" -o "${OPENSSL_FILENAME}"
           curl -fSL "https://github.com/cocoa-xu/openssl-build/releases/download/v${{ steps.build-check.outputs.openssl_version }}/${OPENSSL_FILENAME}.sha256" -o "${OPENSSL_FILENAME}.sha256"
-          shasum -c "${OTP_SRC_FILENAME}.sha256"
+          shasum -c "${OPENSSL_FILENAME}.sha256"
 
       - name: Cache Precompiled wxWidgets
         if: steps.build-check.outputs.build == 'true' && steps.build-check.outputs.with_wxwidgets != 'false'
@@ -150,6 +151,7 @@ jobs:
           key: wxwidgets-${{ steps.build-check.outputs.with_wxwidgets }}-${{ steps.build-check.outputs.wxwidgets_version }}-${{ matrix.job.target }}
           path: |
             ./wxwidgets-${{ steps.build-check.outputs.with_wxwidgets }}-${{ matrix.job.target }}.tar.gz
+            ./wxwidgets-${{ steps.build-check.outputs.with_wxwidgets }}-${{ matrix.job.target }}.tar.gz.sha256
 
       - name: Download Precompiled wxWidgets
         if: steps.build-check.outputs.build == 'true' && steps.build-check.outputs.with_wxwidgets != 'false' && steps.cache-wxwidgets.outputs.cache-hit != 'true'
