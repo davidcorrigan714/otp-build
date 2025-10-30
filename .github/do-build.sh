@@ -57,6 +57,8 @@ case $TARGET in
     ;;
 esac
 
+CONFIGURE_OPTIONS+=" --without-termcap --enable-static-nifs --enable-builtin-zlib"
+
 tar -xzf "otp_src_${OTP_VERSION}.tar.gz" -C "otp_src_${OTP_VERSION}" --strip-components=1
 cd "otp_src_${OTP_VERSION}"
 
