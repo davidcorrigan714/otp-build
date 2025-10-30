@@ -61,9 +61,9 @@ tar -xzf "otp_src_${OTP_VERSION}.tar.gz" -C "otp_src_${OTP_VERSION}" --strip-com
 cd "otp_src_${OTP_VERSION}"
 
 if [ "${OPENSSL_VERSION}" != "nil" ]; then
-  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS}  --without-termcap --enable-static-nifs --enable-builtin-zlib;
+  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS}  --without-termcap;
 else
-  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS}  --without-termcap --enable-static-nifs --enable-builtin-zlib;
+  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS}  --without-termcap;
 fi
 
 rm -rf "${RELDIR}"
