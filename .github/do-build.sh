@@ -57,15 +57,13 @@ case $TARGET in
     ;;
 esac
 
-CONFIGURE_OPTIONS+=" --without-termcap --enable-static-nifs --enable-builtin-zlib"
-
 tar -xzf "otp_src_${OTP_VERSION}.tar.gz" -C "otp_src_${OTP_VERSION}" --strip-components=1
 cd "otp_src_${OTP_VERSION}"
 
 if [ "${OPENSSL_VERSION}" != "nil" ]; then
-  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS} ;
+  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS}  --without-termcap --enable-static-nifs --enable-builtin-zlib;
 else
-  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS} ;
+  ./otp_build configure --without-javac --with-ssl="${OPENSSL_PERFIX_DIR}" --disable-dynamic-ssl-lib ${CONFIGURE_OPTIONS}  --without-termcap --enable-static-nifs --enable-builtin-zlib;
 fi
 
 rm -rf "${RELDIR}"
